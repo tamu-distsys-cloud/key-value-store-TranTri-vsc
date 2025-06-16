@@ -28,7 +28,15 @@ class Clerk:
     # arguments in server.py.
     def get(self, key: str) -> str:
         # You will have to modify this function.
-        return ""
+        args = GetArgs(key)
+        while True:
+            for server in self.servers:
+                try:
+                    reply = server.call("KVServer.Get", args)
+                    return reply.value
+                except TimeoutError:
+                    continue
+        # return ""
 
     # Shared by Put and Append.
     #
@@ -41,7 +49,15 @@ class Clerk:
     # arguments in server.py.
     def put_append(self, key: str, value: str, op: str) -> str:
         # You will have to modify this function.
-        return ""
+        args = PutAppendArgs(key, value)
+        while True:
+            for server in self.servers:
+                try:
+                    reply =server.call(f"KVServer.{op}", args)
+                    return reply.value
+                except TimeoutError:
+                    continue
+        # return ""
 
     def put(self, key: str, value: str):
         self.put_append(key, value, "Put")
